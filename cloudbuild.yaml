@@ -1,0 +1,52 @@
+steps:
+#step 1
+- name: 'gcr.io/cloud-builders/git'
+  args: ['clone', 'https://github.com/S-O-L-A-R/payment-ms.git']
+
+- name: 'gcr.io/cloud-builders/git'
+  args: ['checkout', 'deployment']
+  dir: 'payment-ms'
+
+- name: 'gcr.io/cloud-builders/mvn'
+  args: ['install']
+
+- name: 'gcr.io/cloud-builders/mvn'
+  args: ['package']
+
+
+#step 2
+- name: gcr.io/cloud-builders/docker
+  args: [
+    'build',
+    '-t',
+    'gcr.io/$PROJECT_ID/payment-ms:$BRANCH_NAME-$COMMIT_SHA',
+    '-t',
+    'gcr.io/$PROJECT_ID/payment-ms:latest',
+    '.'
+  ]
+
+#step 3
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'k8s/']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_COMPUTE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER_NAME}'
+
+#step 4
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: [
+    'set',
+    'image',
+    'deployment',
+    'payment-ms',
+    'payment-ms=gcr.io/$PROJECT_ID/payment-ms:$BRANCH_NAME-$COMMIT_SHA'
+  ]
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_COMPUTE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER_NAME}'
+  
+# push images to Google Container Registry with tags
+images: [
+  'gcr.io/$PROJECT_ID/payment-ms:$BRANCH_NAME-$COMMIT_SHA',
+  'gcr.io/$PROJECT_ID/payment-ms:latest'
+]
