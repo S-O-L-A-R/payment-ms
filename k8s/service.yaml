@@ -1,10 +1,10 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: rms-ms
+  name: payment-ms
 spec:
   selector:
-    run: rms-ms
+    run: payment-ms
   ports:
   - protocol: TCP
     port: 80

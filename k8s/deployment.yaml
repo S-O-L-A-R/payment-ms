@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: rms-ms
-  name: rms-ms
+    run: payment-ms
+  name: payment-ms
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: rms-ms
+      run: payment-ms
   template:
     metadata:
       labels:
-        run: rms-ms
+        run: payment-ms
     spec:
       containers:
-      - image: gcr.io/vaulted-channel-252309/rms-ms:latest
-        name: rms-ms
+      - image: gcr.io/vaulted-channel-252309/payment-ms:latest
+        name: payment-ms
         ports:
         - containerPort: 8080
