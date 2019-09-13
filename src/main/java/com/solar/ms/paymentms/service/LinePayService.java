@@ -45,11 +45,11 @@ public class LinePayService {
         httpHeaders.set(LINE_PAY_CHANNEL_SECRET_HEADER_KEY, channelSecret);
 
         LinePayReserveRequest linePayReserveRequest = new LinePayReserveRequest();
-        linePayReserveRequest.setProductName("test");
+        linePayReserveRequest.setProductName("Test");
         linePayReserveRequest.setAmount(BigDecimal.ONE);
         linePayReserveRequest.setOrderId("ORDER-" + UUID.randomUUID().toString());
         linePayReserveRequest.setCurrency(CURRENCY_THB);
-        linePayReserveRequest.setLangCd("th");
+        linePayReserveRequest.setLangCd(httpHeaders.getFirst(HttpHeaders.ACCEPT_LANGUAGE));
         linePayReserveRequest.setConfirmUrl(callbackUrl);
         linePayReserveRequest.setConfirmUrlType("SERVER");
 

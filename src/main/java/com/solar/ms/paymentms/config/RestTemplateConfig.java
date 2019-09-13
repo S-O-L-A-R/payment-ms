@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -46,6 +47,11 @@ public class RestTemplateConfig {
                 httpHeaders.add(header, value);
             }
         }
+
+        if (!httpHeaders.containsKey("accept-language") || StringUtils.isEmpty(httpHeaders.getFirst("accept-language"))) {
+            httpHeaders.set("accept-language", "th");
+        }
+
         return httpHeaders;
     }
 }
