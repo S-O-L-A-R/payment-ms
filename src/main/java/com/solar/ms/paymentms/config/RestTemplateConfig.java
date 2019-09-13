@@ -5,7 +5,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 @Configuration
 public class RestTemplateConfig {
@@ -18,8 +25,19 @@ public class RestTemplateConfig {
 
 
     @Bean
-    @Scope(value = "request")
+    @RequestScope
     public HttpHeaders httpHeaders(){
-        return new HttpHeaders();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        HttpServletRequest curRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        Enumeration<String> headerNames = curRequest.getHeaderNames();
+        if (headerNames != null) {
+            while(headerNames.hasMoreElements()) {
+                String header = headerNames.nextElement();
+                String value = curRequest.getHeader(header);
+                httpHeaders.add(header, value);
+            }
+        }
+        return httpHeaders;
     }
 }
