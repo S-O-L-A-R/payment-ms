@@ -19,3 +19,13 @@ spec:
         name: payment-ms
         ports:
         - containerPort: 8080
+      - name: linepay.channel-id
+        valueFrom:
+          secretKeyRef:
+            name: payment-ms
+            key: linepay.channel-id
+      - name: linepay.channel-secret
+        valueFrom:
+          secretKeyRef:
+            name: payment-ms
+            key: linepay.channel-secret
