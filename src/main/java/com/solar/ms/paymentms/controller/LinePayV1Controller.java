@@ -1,14 +1,12 @@
 package com.solar.ms.paymentms.controller;
 
+import com.solar.ms.paymentms.model.linepay.LinePayConfirmRequest;
 import com.solar.ms.paymentms.service.LinePayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -25,5 +23,16 @@ public class LinePayV1Controller {
         log.info("HEADER: {}, BODY: {}", httpHeaders, requestBody);
 
         return linePayService.reservePayment();
+    }
+
+    @GetMapping(value = "/payment/callback")
+    public ResponseEntity<?> paymentCallback(@RequestParam String transactionId, @RequestParam String orderId){
+        log.info("HEADERS: {}, transactionId: {}, orderId: {}", httpHeaders, transactionId, orderId);
+
+        ResponseEntity<?> confirmationResponse =  linePayService.confirmPayment(transactionId, orderId);
+
+        log.info("{}", confirmationResponse);
+
+        return confirmationResponse;
     }
 }
