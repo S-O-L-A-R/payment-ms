@@ -1,6 +1,7 @@
 package com.solar.ms.paymentms.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 public class RmsService {
 
     @Autowired
+    @Qualifier(value = "loadBalancedRestTemplate")
     private RestTemplate loadBalancedRestTemplate;
 
     @Value("${service.rms-ms.check-status.url}")

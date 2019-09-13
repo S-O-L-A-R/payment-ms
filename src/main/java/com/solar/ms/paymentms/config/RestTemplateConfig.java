@@ -3,6 +3,7 @@ package com.solar.ms.paymentms.config;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,6 +20,13 @@ public class RestTemplateConfig {
     @LoadBalanced
     @Bean(name = "loadBalancedRestTemplate")
     public RestTemplate getLoadBalancedRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate;
+    }
+
+    @Primary
+    @Bean(name = "externalRestTemplate")
+    public RestTemplate getExternalRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate;
     }
