@@ -25,13 +25,4 @@ public class TestController {
     public ResponseEntity<String> checkRmsHealth(){
         return rmsService.checkHealth();
     }
-
-    @GetMapping(value = "/v1/secret")
-    public ResponseEntity<?> testConfig(){
-        Map<String, String> data = new HashMap<>();
-        data.put("channel-id", channelId);
-        data.put("channel-secret", channelSecret);
-
-        return ResponseEntity.ok(data);
-    }
 }
