@@ -1,5 +1,7 @@
 package com.solar.ms.paymentms.controller;
 
+import com.solar.ms.paymentms.model.ConfirmPaymentRequest;
+import com.solar.ms.paymentms.model.ReservePaymentRequest;
 import com.solar.ms.paymentms.model.linepay.LinePayConfirmRequest;
 import com.solar.ms.paymentms.service.LinePayService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,20 +21,13 @@ public class LinePayV1Controller {
     private LinePayService linePayService;
 
     @PostMapping(value = "/reserve")
-    public ResponseEntity<?> reservePayment(@RequestBody String requestBody){
+    public ResponseEntity<?> reservePayment(@RequestBody ReservePaymentRequest requestBody){
         log.info("HEADER: {}, BODY: {}", httpHeaders, requestBody);
-
-        return linePayService.reservePayment();
+        return linePayService.reservePayment(requestBody);
     }
 
-    @GetMapping(value = "/payment/callback")
-    public ResponseEntity<?> paymentCallback(@RequestParam String transactionId, @RequestParam String orderId){
-        log.info("HEADERS: {}, transactionId: {}, orderId: {}", httpHeaders, transactionId, orderId);
-
-        ResponseEntity<?> confirmationResponse =  linePayService.confirmPayment(transactionId, orderId);
-
-        log.info("{}", confirmationResponse);
-
-        return confirmationResponse;
+    @PostMapping(value = "/confirm")
+    public ResponseEntity<?> confirmPayment(@RequestBody ConfirmPaymentRequest confirmPaymentRequest){
+        return linePayService.confirmPayment(confirmPaymentRequest.getTransactionId(), confirmPaymentRequest.getAmount());
     }
 }

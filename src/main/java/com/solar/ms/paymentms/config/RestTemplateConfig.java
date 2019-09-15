@@ -1,5 +1,6 @@
 package com.solar.ms.paymentms.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +15,17 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
+@Slf4j
 @Configuration
 public class RestTemplateConfig {
+
+    private static final List<String> ALLOW_HEADER_LIST = Collections.unmodifiableList(Arrays.asList("correlationid", "userid", "accept-language", "loginid", "channelid", "x-forwarded-for", "scb-channel", "accessid", "api-scope"));
+
     @LoadBalanced
     @Bean(name = "loadBalancedRestTemplate")
     public RestTemplate getLoadBalancedRestTemplate() {
@@ -44,7 +52,10 @@ public class RestTemplateConfig {
             while(headerNames.hasMoreElements()) {
                 String header = headerNames.nextElement();
                 String value = curRequest.getHeader(header);
-                httpHeaders.add(header, value);
+                if (ALLOW_HEADER_LIST.contains(header.toLowerCase())) {
+                    log.info("Adding header {} with value {}", header, value);
+                    httpHeaders.add(header, value);
+                }
             }
         }
 

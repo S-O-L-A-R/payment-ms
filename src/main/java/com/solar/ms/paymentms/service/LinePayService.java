@@ -1,7 +1,9 @@
 package com.solar.ms.paymentms.service;
 
+import com.solar.ms.paymentms.model.ReservePaymentRequest;
 import com.solar.ms.paymentms.model.linepay.LinePayConfirmRequest;
 import com.solar.ms.paymentms.model.linepay.LinePayReserveRequest;
+import com.solar.ms.paymentms.model.linepay.LinePayReserveResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,36 +39,34 @@ public class LinePayService {
     private String reserveUrl;
     @Value("${service.linepay.confirm.url}")
     private String confirmUrl;
-    @Value("${service.payment.linepay.payment-callback.url}")
-    private String callbackUrl;
 
-    public ResponseEntity<String> reservePayment(){
+    public ResponseEntity<LinePayReserveResponse> reservePayment(ReservePaymentRequest reservePaymentRequest){
         httpHeaders.set(LINE_PAY_CHANNEL_ID_HEADER_KEY, channelId);
         httpHeaders.set(LINE_PAY_CHANNEL_SECRET_HEADER_KEY, channelSecret);
 
         LinePayReserveRequest linePayReserveRequest = new LinePayReserveRequest();
-        linePayReserveRequest.setProductName("Test");
+        linePayReserveRequest.setProductName(reservePaymentRequest.getProductName());
         linePayReserveRequest.setAmount(BigDecimal.ONE);
-        linePayReserveRequest.setOrderId("ORDER-" + UUID.randomUUID().toString());
+        linePayReserveRequest.setOrderId(reservePaymentRequest.getOrderId());
         linePayReserveRequest.setCurrency(CURRENCY_THB);
         linePayReserveRequest.setLangCd(httpHeaders.getFirst(HttpHeaders.ACCEPT_LANGUAGE));
-        linePayReserveRequest.setConfirmUrl(callbackUrl);
+        linePayReserveRequest.setConfirmUrl(reservePaymentRequest.getConfirmUrl());
         linePayReserveRequest.setConfirmUrlType("SERVER");
 
         return restTemplate.exchange(
                 reserveUrl,
                 HttpMethod.POST,
                 new HttpEntity<>(linePayReserveRequest, httpHeaders),
-                String.class
+                LinePayReserveResponse.class
         );
     }
 
-    public ResponseEntity<String> confirmPayment(String transactionId, String orderId){
+    public ResponseEntity<String> confirmPayment(String transactionId, BigDecimal amount){
         httpHeaders.set(LINE_PAY_CHANNEL_ID_HEADER_KEY, channelId);
         httpHeaders.set(LINE_PAY_CHANNEL_SECRET_HEADER_KEY, channelSecret);
 
         LinePayConfirmRequest linePayConfirmRequest = new LinePayConfirmRequest();
-        linePayConfirmRequest.setAmount(BigDecimal.ONE);
+        linePayConfirmRequest.setAmount(amount);
         linePayConfirmRequest.setCurrency(CURRENCY_THB);
 
         try {
