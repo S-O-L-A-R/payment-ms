@@ -46,12 +46,13 @@ public class LinePayService {
 
         LinePayReserveRequest linePayReserveRequest = new LinePayReserveRequest();
         linePayReserveRequest.setProductName(reservePaymentRequest.getProductName());
-        linePayReserveRequest.setAmount(BigDecimal.ONE);
+        linePayReserveRequest.setAmount(reservePaymentRequest.getAmount());
         linePayReserveRequest.setOrderId(reservePaymentRequest.getOrderId());
         linePayReserveRequest.setCurrency(CURRENCY_THB);
         linePayReserveRequest.setLangCd(httpHeaders.getFirst(HttpHeaders.ACCEPT_LANGUAGE));
         linePayReserveRequest.setConfirmUrl(reservePaymentRequest.getConfirmUrl());
         linePayReserveRequest.setConfirmUrlType("SERVER");
+        linePayReserveRequest.setProductImageUrl("https://avatars2.githubusercontent.com/u/54903129?s=200&v=4");
 
         return restTemplate.exchange(
                 reserveUrl,

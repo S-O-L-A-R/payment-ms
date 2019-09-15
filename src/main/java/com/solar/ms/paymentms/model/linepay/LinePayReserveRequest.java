@@ -13,4 +13,5 @@ public class LinePayReserveRequest {
     private String confirmUrl;
     private String langCd;
     private String confirmUrlType;
+    private String productImageUrl;
 }
